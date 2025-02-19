@@ -1,6 +1,5 @@
 import { activeWindow } from "active-win";
 
-// Liste des projets à surveiller
 const TRACKED_PROJECTS = [
   "VelvetDream",
   "Blatant",
@@ -13,7 +12,7 @@ const TRACKED_PROJECTS = [
 ];
 
 export default async function getActiveWindow() {
-  const window = await activeWindow(); // Récupère la fenêtre active
+  const window = await activeWindow();
   const windowTitle = window ? window.title : "";
 
   if (windowTitle) {

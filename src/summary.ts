@@ -1,7 +1,7 @@
 import axios from "axios";
 import takeScreenshot from "./shot";
 
-const GROQ_KEY = process.env.GROQ_KEY!; // Remplace par ta clé API OpenRouter
+const GROQ_KEY = process.env.GROQ_KEY!;
 
 const generateSummary = async (projectDetails: string) => {
   const prompt = `Summarize the latest progress on my project based on the following details: ${projectDetails}. \nMake it concise and engaging for a LinkedIn post. Highlight key improvements and features in a professional yet accessible tone. Keep it under 3-4 sentences. Write it without comments.`;
