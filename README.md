@@ -38,7 +38,7 @@ This project automates LinkedIn posts based on progress made in active projects.
 
 ### Phase 3: Enhancements
 
-- [ ] Store post history in MongoDB
+- [ ] Store post history in SQlite3
 - [ ] Support video recordings instead of screenshots
 - [ ] Add UI for previewing and editing posts before publishing
 
