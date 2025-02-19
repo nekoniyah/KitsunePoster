@@ -22,7 +22,7 @@ export default async function getActiveWindow() {
     );
 
     if (isTracked) {
-      console.log(`🟢 Projet détecté : ${windowTitle}`);
+      console.log(`🟢 Detected project : ${windowTitle}`);
     }
   }
 }
