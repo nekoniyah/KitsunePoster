@@ -1,43 +1,23 @@
 import axios from "axios";
 import takeScreenshot from "./shot";
 
-const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY!; // Remplace par ta clé API OpenRouter
+const GROQ_KEY = process.env.GROQ_KEY!; // Remplace par ta clé API OpenRouter
 
 const generateSummary = async (projectDetails: string) => {
-  const systemPrompt = `
-      1. **Nouvelles fonctionnalités ajoutées** :
-         - (Liste des nouvelles fonctionnalités ou modules ajoutés)
-  
-      2. **Améliorations effectuées** :
-         - (Liste des améliorations et optimisations apportées au code ou aux systèmes existants)
-  
-      3. **Problèmes résolus** :
-         - (Mentionner les bugs ou problèmes résolus dans cette mise à jour)
-  
-      Voici un exemple :
-      1. **Nouvelles fonctionnalités ajoutées** :
-         - Ajout d'un système de combat amélioré pour VelvetDream.
-         - Introduction d'un moteur de quêtes interactif avec des dialogues personnalisés.
-  
-      2. **Améliorations effectuées** :
-         - Optimisation des performances du moteur de rendu.
-         - Réduction de la latence des actions en combat.
-  
-      3. **Problèmes résolus** :
-         - Correction d'un bug qui empêchait le joueur de sauvegarder sa progression en combat.`;
+  const prompt = `Summarize the latest progress on my project based on the following details: ${projectDetails}. \nMake it concise and engaging for a LinkedIn post. Highlight key improvements and features in a professional yet accessible tone. Keep it under 3-4 sentences. Write it without comments.`;
 
   try {
     const response = await axios.post(
-      "https://openrouter.ai/api/v1/chat/completions",
+      "https://api.groq.com/openai/v1/chat/completions",
       {
-        model: "meta-llama/llama-3.2-11b-vision-instruct:free",
+        model: "llama-3.2-90b-vision-preview",
         messages: [
           {
             role: "user",
             content: [
               {
                 type: "text",
-                text: ` Voici un résumé des avancées de mon projet : ${projectDetails}. Rédige-moi un résumé concis en suivant le modèle suivant :\n ${systemPrompt}.`,
+                text: prompt,
               },
               {
                 type: "image_url",
@@ -48,11 +28,11 @@ const generateSummary = async (projectDetails: string) => {
             ],
           },
         ],
-        max_tokens: 200, // On augmente un peu le nombre de tokens pour plus de détails
+        max_tokens: 200,
       },
       {
         headers: {
-          Authorization: `Bearer ${OPENROUTER_API_KEY}`,
+          Authorization: `Bearer ${GROQ_KEY}`,
           "Content-Type": "application/json",
         },
       }

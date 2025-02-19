@@ -4,11 +4,11 @@ config();
 
 import generateSummary from "./src/summary";
 
-// Exemple d'appel
+// Call Example
 const projectDetails =
-  "VelvetDream travaille sur KitsunePoster, un projet du créateur Nekoniyah. KitsunePoster servira à poster automatiquement sur Linkedin.";
+  "VelvetDream is working on KitsunePoster. A project to post automatically on Linkedin.";
 generateSummary(projectDetails).then((r) => {
   console.log(r);
 });
-// Exécuter toutes les 5 secondes
+// Execute every 5 seconds
 setInterval(getActiveWindow, 5000);
