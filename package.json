@@ -1,0 +1,24 @@
+{
+  "name": "kitsuneposter",
+  "module": "index.ts",
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/screenshot-desktop": "^1.12.3"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "type": "module",
+  "dependencies": {
+    "active-win": "^9.0.0",
+    "axios": "^1.7.9",
+    "dotenv": "^16.4.7",
+    "screenshot-desktop": "^1.15.1",
+    "simple-git": "^3.27.0",
+    "windows-active-process": "^1.1.1"
+  },
+  "trustedDependencies": [
+    "active-win",
+    "windows-active-process"
+  ]
+}
