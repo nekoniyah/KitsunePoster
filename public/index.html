@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>KitsunePoster Dashboard</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                max-width: 800px;
+                margin: 0 auto;
+                padding: 20px;
+            }
+            .post-card {
+                border: 1px solid #ddd;
+                padding: 15px;
+                margin: 10px 0;
+                border-radius: 5px;
+            }
+            .post-card img {
+                max-width: 100%;
+                height: auto;
+            }
+            .share-btn {
+                background-color: #0077b5;
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 5px;
+                cursor: pointer;
+            }
+            .share-btn:hover {
+                background-color: #006097;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>KitsunePoster Dashboard</h1>
+        <div id="posts-container"></div>
+
+        <script>
+            async function loadPosts() {
+                const response = await fetch("/api/posts");
+                const posts = await response.json();
+                const container = document.getElementById("posts-container");
+
+                container.innerHTML = posts
+                    .map(
+                        (post) => `
+                <div class="post-card">
+                    <p><strong>Project:</strong> ${post.title}</p>
+                    <p><strong>Type:</strong> ${post.type}</p>
+                    <p><strong>Content:</strong> ${post.content}</p>
+                    ${
+                        post.screenshot
+                            ? `<img src="${post.screenshot}" alt="Screenshot">`
+                            : ""
+                    }
+                    <p><strong>Created:</strong> ${new Date(
+                        post.timestamp
+                    ).toLocaleString()}</p>
+                    <button class="share-btn" onclick="sharePost('${
+                        post.id
+                    }', '${post.content}')">
+                        Share on LinkedIn
+                    </button>
+                </div>
+            `
+                    )
+                    .join("");
+            }
+
+            async function sharePost(id, content) {
+                try {
+                    const response = await fetch("/api/share", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ content }),
+                    });
+
+                    if (response.ok) {
+                        alert("Post shared successfully!");
+                    } else {
+                        alert("Failed to share post");
+                    }
+                } catch (error) {
+                    console.error("Error sharing post:", error);
+                    alert("Error sharing post");
+                }
+            }
+
+            // Load posts when page loads
+            loadPosts();
+        </script>
+    </body>
+</html>

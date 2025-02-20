@@ -1,6 +1,11 @@
 import { config } from "dotenv";
 import getActiveWindow from "./src/tracker";
+import { startServer } from "./src/server";
+
 config();
 
-// Execute every 5 seconds
+// Start the web server
+startServer();
+
+// Continue monitoring windows
 setInterval(getActiveWindow, 5000);
