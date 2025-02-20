@@ -12,6 +12,8 @@
     "axios": "^1.7.9",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
+    "jimp": "^1.6.0",
+    "robotjs": "^0.6.0",
     "screenshot-desktop": "^1.15.1",
     "simple-git": "^3.27.0",
     "sqlite3": "^5.1.6",
@@ -24,6 +26,7 @@
   },
   "trustedDependencies": [
     "active-win",
+    "robotjs",
     "sqlite3",
     "windows-active-process"
   ]

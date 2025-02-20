@@ -47,7 +47,7 @@ export default async function getActiveWindow() {
                         timestamp: new Date(),
                     },
                     summary,
-                    screenshot
+                    screenshot!
                 );
                 console.log("Figma update saved to database");
             }
@@ -65,7 +65,7 @@ export default async function getActiveWindow() {
                         timestamp: new Date(),
                     },
                     summary,
-                    screenshot
+                    screenshot!
                 );
                 console.log("Git update saved to database");
             }
