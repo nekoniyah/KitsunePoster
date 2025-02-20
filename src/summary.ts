@@ -4,7 +4,13 @@ import takeScreenshot from "./utils/screenshot";
 const GROQ_KEY = process.env.GROQ_KEY!;
 
 const generateSummary = async (projectDetails: string) => {
-    const prompt = `Summarize the latest progress on my project based on the following details: ${projectDetails}. \nMake it concise and engaging for a LinkedIn post. Highlight key improvements and features in a professional yet accessible tone. Keep it under 3-4 sentences. Write it without comments.`;
+    const screenshot = await takeScreenshot();
+
+    // Different prompt for Figma vs Git projects
+    const isFigmaProject = projectDetails.includes("figma");
+    const prompt = isFigmaProject
+        ? `Looking at this screenshot of my Figma work, describe the visual design and layout changes shown. Keep it concise and engaging for a LinkedIn post, under 3-4 sentences.`
+        : `Summarize the latest progress on my project based on the following details: ${projectDetails}. \nMake it concise and engaging for a LinkedIn post. Highlight key improvements and features in a professional yet accessible tone. Keep it under 3-4 sentences.`;
 
     try {
         const response = await axios.post(
@@ -22,7 +28,7 @@ const generateSummary = async (projectDetails: string) => {
                             {
                                 type: "image_url",
                                 image_url: {
-                                    url: await takeScreenshot(),
+                                    url: screenshot,
                                 },
                             },
                         ],
@@ -41,7 +47,7 @@ const generateSummary = async (projectDetails: string) => {
         const summary = response.data.choices[0].message.content;
         return summary;
     } catch (error) {
-        console.error("Erreur lors de la génération du résumé:", error);
+        console.error("Error generating summary:", error);
     }
 };
 

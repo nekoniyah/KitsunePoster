@@ -1,6 +1,5 @@
 import { activeWindow } from "active-win";
 import { getGitChanges } from "./api/git";
-import { getFigmaChanges } from "./api/figma";
 import generateSummary from "./summary";
 import { Database } from "./database/sqlite";
 import takeScreenshot from "./utils/screenshot";
@@ -9,6 +8,9 @@ const TRACKED_PROJECTS = [
     "VelvetDream",
     "Blatant",
     "BSOG",
+    "Figma",
+    "Godot",
+    "Photoshop",
     "Raoronia",
     "Personal & Projects",
 ];
@@ -31,29 +33,42 @@ export default async function getActiveWindow() {
 
     try {
         const projectType = windowTitle.includes("Figma") ? "figma" : "git";
-        const changes =
-            projectType === "figma"
-                ? await getFigmaChanges(process.env.FIGMA_FILE_KEY!)
-                : await getGitChanges(process.env.GIT_REPO_PATH!);
-
         const screenshot = await takeScreenshot();
-        const summary = await generateSummary(JSON.stringify(changes));
 
-        if (summary) {
-            // Only save to database, don't post automatically
-            await db.savePost(
-                {
-                    type: projectType,
-                    title: windowTitle,
-                    changes: changes.map(
-                        (c: any) => c.message || c.description
-                    ),
-                    timestamp: new Date(),
-                },
-                summary,
-                screenshot
-            );
-            console.log("Update saved to database");
+        if (projectType === "figma") {
+            // For Figma, just use screenshot and generate summary from it
+            const summary = await generateSummary("figma");
+            if (summary) {
+                await db.savePost(
+                    {
+                        type: projectType,
+                        title: windowTitle,
+                        changes: ["Visual update"], // Simple placeholder since we're focusing on the screenshot
+                        timestamp: new Date(),
+                    },
+                    summary,
+                    screenshot
+                );
+                console.log("Figma update saved to database");
+            }
+        } else {
+            // For Git projects, get changes and generate summary as before
+            const changes = await getGitChanges(process.env.GIT_REPO_PATH!);
+            const summary = await generateSummary(JSON.stringify(changes));
+
+            if (summary) {
+                await db.savePost(
+                    {
+                        type: projectType,
+                        title: windowTitle,
+                        changes: changes.map((c) => c.message),
+                        timestamp: new Date(),
+                    },
+                    summary,
+                    screenshot
+                );
+                console.log("Git update saved to database");
+            }
         }
     } catch (error) {
         console.error("Error processing project update:", error);
