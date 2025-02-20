@@ -3,14 +3,31 @@ import takeScreenshot from "./utils/screenshot";
 
 const GROQ_KEY = process.env.GROQ_KEY!;
 
-const generateSummary = async (projectDetails: string) => {
+const generateSummary = async (
+    projectDetails: string,
+    projectTitle: string
+) => {
     const screenshot = await takeScreenshot();
 
-    // Different prompt for Figma vs Git projects
     const isFigmaProject = projectDetails.includes("figma");
-    const prompt = isFigmaProject
-        ? `Looking at this screenshot of my Figma work, describe the visual design and layout changes shown. Keep it concise and engaging for a LinkedIn post, under 3-4 sentences.`
-        : `Summarize the latest progress on my project based on the following details: ${projectDetails}. \nMake it concise and engaging for a LinkedIn post. Highlight key improvements and features in a professional yet accessible tone. Keep it under 3-4 sentences.`;
+    const prompt = `${
+        isFigmaProject
+            ? "Looking at this Figma screenshot"
+            : `Based on these changes: ${projectDetails}`
+    }, write ONLY a LinkedIn post in this exact format:
+
+[Exciting project update] 🚀 [What was done/achieved]. [Impact or future plans]. #Hashtag1 #Hashtag2
+
+Rules:
+- Start directly with the post
+- Use first person ("I", "my")
+- No introductory phrases like "Here's"
+- No explanations or meta-commentary
+- Just the post text itself
+
+Additionnal informations:
+- The project name/title is "${projectTitle}"
+`;
 
     try {
         const response = await axios.post(

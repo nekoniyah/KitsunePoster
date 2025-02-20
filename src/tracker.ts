@@ -33,11 +33,14 @@ export default async function getActiveWindow() {
 
     try {
         const projectType = windowTitle.includes("Figma") ? "figma" : "git";
+        console.log("ok0");
         const screenshot = await takeScreenshot();
 
         if (projectType === "figma") {
+            console.log("ok");
             // For Figma, just use screenshot and generate summary from it
-            const summary = await generateSummary("figma");
+            const summary = await generateSummary("figma", windowTitle);
+            console.log("ok1");
             if (summary) {
                 await db.savePost(
                     {
@@ -54,7 +57,11 @@ export default async function getActiveWindow() {
         } else {
             // For Git projects, get changes and generate summary as before
             const changes = await getGitChanges(process.env.GIT_REPO_PATH!);
-            const summary = await generateSummary(JSON.stringify(changes));
+            console.log("ok2");
+            const summary = await generateSummary(
+                JSON.stringify(changes),
+                windowTitle
+            );
 
             if (summary) {
                 await db.savePost(

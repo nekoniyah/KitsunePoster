@@ -1,33 +1,45 @@
-import robot from "robotjs";
+import screenshot from "screenshot-desktop";
 import { activeWindow } from "active-win";
-import { Jimp } from "jimp"; // We'll need this to convert the raw data to PNG
+import { Jimp } from "jimp";
 
 export default async function takeScreenshot() {
-    const window = await activeWindow();
-    if (!window) return null;
+    try {
+        const window = await activeWindow();
+        if (!window) return null;
 
-    const { bounds } = window;
-    const capture = robot.screen.capture(
-        bounds.x,
-        bounds.y,
-        bounds.width,
-        bounds.height
-    );
+        const { bounds } = window;
 
-    // Create a new Jimp image from the raw pixel data
-    const image = new Jimp({ width: capture.width, height: capture.height });
-    let pos = 0;
-    image.scan(0, 0, capture.width, capture.height, (x, y, idx) => {
-        const red = capture.image[pos++];
-        const green = capture.image[pos++];
-        const blue = capture.image[pos++];
-        image.bitmap.data[idx + 0] = red;
-        image.bitmap.data[idx + 1] = green;
-        image.bitmap.data[idx + 2] = blue;
-        image.bitmap.data[idx + 3] = 255; // Alpha channel
-    });
+        // Ensure bounds are positive values
+        const x = Math.max(0, bounds.x);
+        const y = Math.max(0, bounds.y);
+        const width = Math.max(1, bounds.width);
+        const height = Math.max(1, bounds.height);
 
-    // Convert to PNG buffer and then to base64
-    const buffer = await image.getBuffer("image/png");
-    return "data:image/png;base64," + buffer.toString("base64");
+        // Capture full screen
+        const fullScreenBuffer = await screenshot({ format: "png" });
+
+        // Read the buffer with Jimp
+        const image = await Jimp.read(fullScreenBuffer);
+
+        // Make sure we don't crop outside image boundaries
+        const cropX = Math.min(x, image.height - 1);
+        const cropY = Math.min(y, image.width - 1);
+        const cropWidth = Math.min(width, image.width - cropX);
+        const cropHeight = Math.min(height, image.height - cropY);
+
+        // Crop to active window bounds
+        const croppedImage = image.crop({
+            x: cropX,
+            y: cropY,
+            w: cropWidth,
+            h: cropHeight,
+        });
+
+        // Convert to PNG buffer and then to base64
+        const buffer = await croppedImage.getBuffer("image/png");
+        return "data:image/png;base64," + buffer.toString("base64");
+    } catch (error) {
+        console.error("Screenshot error:", error);
+        return null;
+    }
 }
